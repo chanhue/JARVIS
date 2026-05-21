@@ -1,0 +1,49 @@
+language: auto   # auto / ko / en — STT 인식 언어 (auto면 발화마다 자동 감지)
+
+system_prompt: |
+  너는 사용자의 macOS 데스크탑에서 동작하는 개인 비서 "자비스(Jarvis)"다.
+  - 사용자가 한국어로 말하면 한국어로, 영어로 말하면 영어로 답한다. (사용자가 쓴 언어를 그대로 따라간다.)
+  - 답은 자연스럽고 간결하게.
+  - 사용자가 시스템 작업(앱 실행, 시간 확인, 스크린샷, 볼륨 조절 등)을 요청하면
+    제공된 도구(tool)를 적극적으로 호출해서 직접 수행한다.
+  - 도구 호출이 필요 없는 일상 대화는 그냥 대답한다.
+  - 모르면 모른다고 말한다.
+
+stt:
+  # faster-whisper 모델 크기: tiny / base / small / medium / large-v3
+  model: small
+  # cpu / cuda / auto
+  device: auto
+  # int8 / int8_float16 / float16 / float32
+  compute_type: int8
+  # 녹음 한 번에 최대 몇 초까지 듣는지 (텍스트 모드에서는 무시)
+  max_record_seconds: 15
+  # 무음으로 판단할 RMS 임계값 (튜닝 필요)
+  silence_threshold: 0.012
+  # 이만큼 무음이 이어지면 발화 종료로 본다 (초)
+  silence_duration: 1.0
+  samplerate: 16000
+
+tts:
+  # 언어별 edge-tts 보이스. 영화 J.A.R.V.I.S.는 라이선스된 TTS가 없어
+  # 대체로 영국 남성 + 차분한 톤을 골랐다.
+  #   en-GB-RyanNeural    (영국 남, 차분) ← Jarvis 분위기에 가장 가까움
+  #   en-GB-ThomasNeural  (영국 남, 살짝 중후)
+  #   en-US-GuyNeural     (미국 남)
+  #   ko-KR-InJoonNeural  (한국 남, 차분)
+  #   ko-KR-HyunsuNeural  (한국 남, 활기)
+  #   ko-KR-SunHiNeural   (한국 여, 차분)
+  voices:
+    en: en-GB-RyanNeural
+    ko: ko-KR-InJoonNeural
+  # 감지된 언어에 매칭되는 보이스가 없을 때 쓰는 기본 언어
+  default_lang: en
+  rate: "+0%"
+  volume: "+0%"
+  # edge-tts 실패 시 pyttsx3 / macOS `say` 로 폴백
+  offline_fallback: true
+
+llm:
+  max_tokens: 1024
+  # 대화 히스토리에서 유지할 최근 user/assistant 턴 수
+  history_turns: 8
