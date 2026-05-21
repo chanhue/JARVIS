@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>JARVIS</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="bg-vignette"></div>
+
+  <header class="top-bar">
+    <div class="brand">
+      <span class="brand-mark">J</span>
+      <span class="brand-name">J.A.R.V.I.S.</span>
+    </div>
+    <div class="meta">
+      <span id="user-chip" class="chip"></span>
+      <span id="provider-chip" class="chip"></span>
+      <button id="btn-settings" class="icon-btn" title="설정" aria-label="설정">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none"
+             stroke="currentColor" stroke-width="1.5"
+             stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="stage">
+    <section class="reactor-wrap">
+      <div class="reactor" id="reactor" data-state="standby">
+        <svg viewBox="0 0 300 300" class="reactor-svg" aria-hidden="true">
+          <defs>
+            <radialGradient id="coreGlow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#9af0ff" stop-opacity="1" />
+              <stop offset="60%" stop-color="#00b3ff" stop-opacity="0.6" />
+              <stop offset="100%" stop-color="#001a2e" stop-opacity="0" />
+            </radialGradient>
+          </defs>
+          <!-- 외곽 회전 링 -->
+          <g class="ring ring-outer">
+            <circle cx="150" cy="150" r="140" fill="none" stroke="currentColor"
+              stroke-width="1" stroke-dasharray="4 6" opacity="0.7" />
+          </g>
+          <g class="ring ring-mid">
+            <circle cx="150" cy="150" r="115" fill="none" stroke="currentColor"
+              stroke-width="1.5" stroke-dasharray="20 8" opacity="0.85" />
+            <circle cx="150" cy="10" r="3" fill="currentColor" />
+            <circle cx="150" cy="290" r="3" fill="currentColor" />
+          </g>
+          <g class="ring ring-inner">
+            <circle cx="150" cy="150" r="90" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-dasharray="2 10" />
+          </g>
+          <!-- 코어 -->
+          <circle cx="150" cy="150" r="70" fill="url(#coreGlow)" class="core-glow" />
+          <circle cx="150" cy="150" r="36" fill="none" stroke="currentColor"
+            stroke-width="2" class="core-inner" />
+          <circle cx="150" cy="150" r="18" fill="currentColor" class="core-center" />
+        </svg>
+        <div class="status-text" id="status-text">STANDBY</div>
+        <div class="status-hint" id="status-hint">Say "Jarvis" to begin</div>
+      </div>
+    </section>
+
+    <aside class="log-panel">
+      <div class="panel-header">
+        <span>TRANSCRIPT</span>
+        <span class="dot" id="ws-dot" title="connection"></span>
+      </div>
+      <div id="log" class="log"></div>
+    </aside>
+  </main>
+
+  <!-- 셋업 모달 -->
+  <div id="setup-modal" class="modal hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span class="brand-mark small">J</span>
+        <span id="modal-title">INITIAL SETUP</span>
+      </div>
+      <div class="modal-body">
+        <label class="field">
+          <span>YOUR NAME</span>
+          <input id="f-name" type="text" placeholder="Tony Stark" autocomplete="off" />
+        </label>
+
+        <label class="field">
+          <span>AI ENGINE</span>
+          <select id="f-provider">
+            <option value="anthropic">Anthropic Claude</option>
+            <option value="openai">OpenAI GPT</option>
+            <option value="ollama">Ollama (local)</option>
+          </select>
+        </label>
+
+        <div id="row-key" class="field">
+          <span id="f-key-label">API KEY</span>
+          <input id="f-key" type="password" placeholder="sk-..." autocomplete="off" />
+        </div>
+
+        <label class="field">
+          <span>MODEL</span>
+          <input id="f-model" type="text" placeholder="claude-opus-4-7" />
+        </label>
+
+        <label id="row-ollama-host" class="field hidden">
+          <span>OLLAMA HOST</span>
+          <input id="f-ollama-host" type="text" value="http://localhost:11434" />
+        </label>
+
+        <div id="setup-error" class="error hidden"></div>
+      </div>
+      <div class="modal-footer">
+        <button id="setup-cancel" class="ghost hidden">CANCEL</button>
+        <button id="setup-submit" class="primary">INITIALIZE</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
