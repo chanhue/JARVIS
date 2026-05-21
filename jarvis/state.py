@@ -14,7 +14,7 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
-Provider = Literal["anthropic", "openai", "ollama"]
+Provider = Literal["anthropic", "openai", "ollama", "gemini"]
 
 STATE_DIR = Path.home() / ".jarvis"
 STATE_FILE = STATE_DIR / "state.json"
@@ -34,6 +34,9 @@ class UserState(BaseModel):
     ollama_host: str = "http://localhost:11434"
     ollama_model: str = "llama3.1"
 
+    gemini_api_key: str = ""
+    gemini_model: str = "gemini-2.5-flash"
+
     def is_complete(self) -> bool:
         """현재 선택된 provider 기준으로 셋업이 끝났는지."""
         if not self.user_name.strip():
@@ -44,6 +47,8 @@ class UserState(BaseModel):
             return bool(self.openai_api_key)
         if self.provider == "ollama":
             return bool(self.ollama_host)
+        if self.provider == "gemini":
+            return bool(self.gemini_api_key)
         return False
 
     def active_key_present(self) -> bool:

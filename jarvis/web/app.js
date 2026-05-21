@@ -35,7 +35,20 @@
   const MODEL_DEFAULTS = {
     anthropic: "claude-opus-4-7",
     openai: "gpt-4o",
+    gemini: "gemini-2.5-flash",
     ollama: "llama3.1",
+  };
+
+  const KEY_LABELS = {
+    anthropic: "ANTHROPIC API KEY",
+    openai: "OPENAI API KEY",
+    gemini: "GOOGLE AI API KEY",
+  };
+
+  const KEY_PLACEHOLDERS = {
+    anthropic: "sk-ant-...",
+    openai: "sk-...",
+    gemini: "AIza...",
   };
 
   // 마지막으로 받아온 /api/state — 모달 열 때 prefill 에 씀
@@ -81,13 +94,13 @@
     } else {
       el.rowKey.classList.remove("hidden");
       el.rowOllamaHost.classList.add("hidden");
-      el.fKeyLabel.textContent = p === "anthropic" ? "ANTHROPIC API KEY" : "OPENAI API KEY";
+      el.fKeyLabel.textContent = KEY_LABELS[p] || "API KEY";
       // 편집 모드 + 해당 provider 에 이미 키가 저장돼 있으면 빈칸 = 유지
       const haveKey = currentState && currentState.have_keys && currentState.have_keys[p];
       if (modalMode === "edit" && haveKey) {
         el.fKey.placeholder = "(현재 키 유지 — 변경하려면 새 키 입력)";
       } else {
-        el.fKey.placeholder = p === "anthropic" ? "sk-ant-..." : "sk-...";
+        el.fKey.placeholder = KEY_PLACEHOLDERS[p] || "...";
       }
     }
   }

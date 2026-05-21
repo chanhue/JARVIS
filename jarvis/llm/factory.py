@@ -26,4 +26,11 @@ def create_llm(user: UserState) -> LLM:
 
         return OllamaLLM(host=user.ollama_host, model=user.ollama_model)
 
+    if provider == "gemini":
+        if not user.gemini_api_key:
+            raise RuntimeError("Gemini API 키가 설정되지 않았습니다.")
+        from .gemini_provider import GeminiLLM
+
+        return GeminiLLM(api_key=user.gemini_api_key, model=user.gemini_model)
+
     raise ValueError(f"알 수 없는 provider: {provider}")
