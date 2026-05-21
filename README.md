@@ -2,7 +2,7 @@
 
 아이언맨의 J.A.R.V.I.S.에서 영감을 받은 개인용 AI 음성 비서 + 데스크탑 컨트롤러.
 **macOS** 환경에서 동작하며, 브라우저에서 영화 같은 HUD UI로 조작합니다.
-여러 LLM(Anthropic Claude / OpenAI GPT / 로컬 Ollama)을 셋업 모달에서 바로 전환할 수 있습니다.
+여러 LLM(Anthropic Claude / OpenAI GPT / Google Gemini / 로컬 Ollama)을 셋업 모달에서 바로 전환할 수 있습니다.
 
 ## ✨ 핵심 기능
 
@@ -11,7 +11,7 @@
 - 🗣 **웨이크워드**: "Jarvis" 또는 "자비스" 둘 다 인식 (`faster-whisper tiny` 연속 청크 인식)
 - 🎙 **STT**: `faster-whisper`, 한국어/영어 자동 감지
 - 🔊 **TTS**: `edge-tts` — 영어는 `en-GB-RyanNeural` (Jarvis 분위기), 한국어는 `ko-KR-InJoonNeural`
-- 🧠 **LLM 플러그블**: Anthropic / OpenAI / Ollama 공통 인터페이스
+- 🧠 **LLM 플러그블**: Anthropic / OpenAI / Google Gemini / Ollama 공통 인터페이스
 - 🛠 **스킬 시스템**: 앱 실행 / 시간 / 볼륨 / 스크린샷 / URL 열기 (LLM tool calling 자동 라우팅)
 - 📡 **WebSocket**: 상태(STANDBY/LISTENING/THINKING/SPEAKING)와 자막 실시간 UI 반영
 
@@ -27,7 +27,7 @@ jarvis/
     ├── config.py                 # state + yaml 합쳐 Settings 만듦
     ├── core.py                   # 대화 루프 + tool 호출 오케스트레이터
     ├── server.py                 # FastAPI + WebSocket + 백그라운드 음성 루프
-    ├── llm/                      # 공통 인터페이스 + 3개 provider + factory
+    ├── llm/                      # 공통 인터페이스 + 4개 provider + factory
     ├── speech/
     │   ├── stt.py                # faster-whisper, (text, lang) 반환
     │   ├── tts.py                # edge-tts + 언어별 보이스 + 폴백
@@ -124,7 +124,7 @@ class HelloSkill(Skill):
 
 - [faster-whisper](https://github.com/SYSTRAN/faster-whisper) — STT / 웨이크워드
 - [edge-tts](https://github.com/rany2/edge-tts) — TTS
-- [Anthropic SDK](https://github.com/anthropics/anthropic-sdk-python), [OpenAI SDK](https://github.com/openai/openai-python), [Ollama Python](https://github.com/ollama/ollama-python)
+- [Anthropic SDK](https://github.com/anthropics/anthropic-sdk-python), [OpenAI SDK](https://github.com/openai/openai-python), [Google GenAI SDK](https://github.com/googleapis/python-genai), [Ollama Python](https://github.com/ollama/ollama-python)
 - [FastAPI](https://github.com/fastapi/fastapi) + [uvicorn](https://github.com/encode/uvicorn) — 웹 서버
 - [pyautogui](https://github.com/asweigart/pyautogui) — 데스크탑 제어
 
