@@ -2,6 +2,7 @@
 anthropic>=0.40.0
 openai>=1.50.0
 ollama>=0.4.0
+google-genai>=1.0.0
 
 # Speech
 faster-whisper>=1.0.3

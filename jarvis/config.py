@@ -8,7 +8,7 @@ from pydantic import BaseModel, Field
 
 from .state import UserState, load_state
 
-Provider = Literal["anthropic", "openai", "ollama"]
+Provider = Literal["anthropic", "openai", "ollama", "gemini"]
 
 
 class STTConfig(BaseModel):

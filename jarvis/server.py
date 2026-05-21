@@ -241,11 +241,13 @@ def api_state() -> JSONResponse:
                 "anthropic": bool(state.anthropic_api_key),
                 "openai": bool(state.openai_api_key),
                 "ollama": True,  # 키 불필요
+                "gemini": bool(state.gemini_api_key),
             },
             "models": {
                 "anthropic": state.anthropic_model,
                 "openai": state.openai_model,
                 "ollama": state.ollama_model,
+                "gemini": state.gemini_model,
             },
             "ollama_host": state.ollama_host,
             "runtime_state": hub._current_state,
@@ -261,7 +263,7 @@ def api_setup(payload: SetupPayload) -> JSONResponse:
     api_key 가 비어있으면 해당 provider 의 기존 키를 그대로 둔다 (UX: 키를 다시
     안 쳐도 이름/모델만 바꿀 수 있도록).
     """
-    if payload.provider not in {"anthropic", "openai", "ollama"}:
+    if payload.provider not in {"anthropic", "openai", "ollama", "gemini"}:
         return JSONResponse({"ok": False, "error": "알 수 없는 provider"}, status_code=400)
     if not payload.user_name.strip():
         return JSONResponse({"ok": False, "error": "이름이 비어있어요"}, status_code=400)
@@ -298,6 +300,16 @@ def api_setup(payload: SetupPayload) -> JSONResponse:
             update["ollama_host"] = payload.ollama_host
         if payload.model:
             update["ollama_model"] = payload.model
+        state = state.model_copy(update=update)
+
+    elif payload.provider == "gemini":
+        if not api_key and not state.gemini_api_key:
+            return JSONResponse({"ok": False, "error": "API 키가 필요해요"}, status_code=400)
+        update = {}
+        if api_key:
+            update["gemini_api_key"] = api_key
+        if payload.model:
+            update["gemini_model"] = payload.model
         state = state.model_copy(update=update)
 
     save_state(state)
