@@ -1,0 +1,25 @@
+# LLM SDKs
+anthropic>=0.40.0
+openai>=1.50.0
+ollama>=0.4.0
+
+# Speech
+faster-whisper>=1.0.3
+edge-tts>=6.1.0
+pyttsx3>=2.90
+sounddevice>=0.4.7
+numpy>=1.26.0
+
+# Desktop control
+pyautogui>=0.9.54
+
+# Web 서버 / UI
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.0
+
+# Config
+pydantic>=2.6.0
+pyyaml>=6.0.1
+
+# (선택) Picovoice 웨이크워드 — 키 발급 시 더 효율적
+# pvporcupine>=3.0.0

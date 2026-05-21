@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+*.egg
+build/
+dist/
+.eggs/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# IDE / editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# 사용자 환경 / 비밀
+# state.json, events.json 은 ~/.jarvis/ 에 있어서 repo 에 들어올 일은 없지만
+# 혹시 프로젝트 루트에 .env 같은 게 생기면 막아둠
+.env
+.env.local
+.env.*.local
+
+# 로그 / 임시 산출물
+*.log
+*.tmp
+
+# Whisper 모델 캐시가 프로젝트 루트로 떨어지는 경우 대비
+# (기본은 ~/.cache 로 떨어짐)
+models/
+*.bin
