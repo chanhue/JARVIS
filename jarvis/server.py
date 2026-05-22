@@ -156,7 +156,10 @@ class Hub:
 
     # ---------- worker ----------
 
-    def _on_wake(self) -> None:
+    _last_wake_keyword: str = ""
+
+    def _on_wake(self, keyword: str = "") -> None:
+        self._last_wake_keyword = keyword
         self._wake_event.set()
 
     def _worker_loop(self) -> None:
@@ -179,6 +182,14 @@ class Hub:
             # 웨이크워드 감지 중에는 일시정지 (마이크 점유 충돌 방지)
             self._wake_listener.pause()
             try:
+                # 깨어났음을 사용자에게 알림 — 매칭된 키워드 언어로 짧게 응답.
+                # "자비스" → 한국어, "jarvis" → 영어. ack 문구가 비어있으면 생략.
+                ack_lang = "ko" if "자비스" in (self._last_wake_keyword or "") else "en"
+                ack_text = (self.settings.wake.ack or {}).get(ack_lang, "")
+                if ack_text:
+                    self.set_state("speaking")
+                    self._tts.say(ack_text, language=ack_lang)
+
                 self.set_state("listening")
                 heard = self._stt.listen_once()
                 if not heard:

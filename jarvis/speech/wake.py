@@ -22,7 +22,9 @@ from ..config import WakeConfig
 
 
 class WakeWordListener:
-    def __init__(self, cfg: WakeConfig, on_wake: Callable[[], None]) -> None:
+    def __init__(self, cfg: WakeConfig, on_wake: Callable[[str], None]) -> None:
+        """on_wake 는 매칭된 키워드(예: "자비스" 또는 "jarvis")를 인자로 받는다.
+        키워드 별로 응답 언어를 고를 수 있도록 시그니처를 확장."""
         self.cfg = cfg
         self.on_wake = on_wake
         self._stop = threading.Event()
@@ -93,15 +95,16 @@ class WakeWordListener:
                     if rms < self.cfg.silence_threshold:
                         continue
 
-                    if self._contains_keyword(model, audio):
+                    matched = self._matched_keyword(model, audio)
+                    if matched:
                         try:
-                            self.on_wake()
+                            self.on_wake(matched)
                         except Exception as e:  # noqa: BLE001
                             print(f"[wake] on_wake 콜백 에러: {e}")
                         # 연속 트리거 방지 (방금 깨어났으니 잠깐 쉼)
                         time.sleep(0.5)
 
-    def _contains_keyword(self, model: WhisperModel, audio: np.ndarray) -> bool:
+    def _matched_keyword(self, model: WhisperModel, audio: np.ndarray) -> Optional[str]:
         try:
             segments, _ = model.transcribe(
                 audio,
@@ -112,5 +115,8 @@ class WakeWordListener:
             )
             text = "".join(seg.text for seg in segments).lower()
         except Exception:  # noqa: BLE001
-            return False
-        return any(kw in text for kw in self._keywords_lower)
+            return None
+        for kw in self._keywords_lower:
+            if kw in text:
+                return kw
+        return None

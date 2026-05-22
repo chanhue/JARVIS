@@ -52,3 +52,20 @@ llm:
   max_tokens: 1024
   # 대화 히스토리에서 유지할 최근 user/assistant 턴 수
   history_turns: 8
+
+wake:
+  # 웨이크워드 인식 모델. faster-whisper 사이즈 옵션:
+  #   tiny    — ~75MB, CPU 최저, 정확도 낮음
+  #   base    — ~145MB, 살짝 무거움, tiny 보다 좋음
+  #   small   — ~460MB, 중간 무게, 한국어/영어 인식 확실히 좋음  ← 현재
+  #   medium  — ~1.5GB, 청크 따라가지 못해 권장 X
+  model: small
+  # 발화 듣는 청크 길이 (초). 길수록 단어 잘림 적지만 반응 느림
+  chunk_seconds: 2.0
+  # 무음으로 볼 RMS 임계값. 낮추면 작은 소리도 인식 시도, CPU 점유 늘어남
+  silence_threshold: 0.008
+  # 깨어났을 때 짧게 응답 — 사용자가 "잘 들었어요" 신호 받게.
+  # 빈 문자열로 두면 응답 안 함.
+  ack:
+    ko: "네?"
+    en: "Yes?"
