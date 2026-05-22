@@ -49,6 +49,10 @@ class WakeConfig(BaseModel):
     samplerate: int = 16000
     # 무음 청크는 인식 안 함
     silence_threshold: float = 0.008
+    # 깨어났을 때 짧게 응답할 문구. 언어별로 매핑. 빈 문자열이면 응답 안 함.
+    ack: dict[str, str] = Field(
+        default_factory=lambda: {"ko": "네?", "en": "Yes?"}
+    )
 
 
 class ServerConfig(BaseModel):
