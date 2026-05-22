@@ -32,35 +32,7 @@
   <main class="stage">
     <section class="reactor-wrap">
       <div class="reactor" id="reactor" data-state="standby">
-        <svg viewBox="0 0 300 300" class="reactor-svg" aria-hidden="true">
-          <defs>
-            <radialGradient id="coreGlow" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stop-color="#9af0ff" stop-opacity="1" />
-              <stop offset="60%" stop-color="#00b3ff" stop-opacity="0.6" />
-              <stop offset="100%" stop-color="#001a2e" stop-opacity="0" />
-            </radialGradient>
-          </defs>
-          <!-- 외곽 회전 링 -->
-          <g class="ring ring-outer">
-            <circle cx="150" cy="150" r="140" fill="none" stroke="currentColor"
-              stroke-width="1" stroke-dasharray="4 6" opacity="0.7" />
-          </g>
-          <g class="ring ring-mid">
-            <circle cx="150" cy="150" r="115" fill="none" stroke="currentColor"
-              stroke-width="1.5" stroke-dasharray="20 8" opacity="0.85" />
-            <circle cx="150" cy="10" r="3" fill="currentColor" />
-            <circle cx="150" cy="290" r="3" fill="currentColor" />
-          </g>
-          <g class="ring ring-inner">
-            <circle cx="150" cy="150" r="90" fill="none" stroke="currentColor"
-              stroke-width="2" stroke-dasharray="2 10" />
-          </g>
-          <!-- 코어 -->
-          <circle cx="150" cy="150" r="70" fill="url(#coreGlow)" class="core-glow" />
-          <circle cx="150" cy="150" r="36" fill="none" stroke="currentColor"
-            stroke-width="2" class="core-inner" />
-          <circle cx="150" cy="150" r="18" fill="currentColor" class="core-center" />
-        </svg>
+        <div class="reactor-canvas" id="reactor-canvas" aria-hidden="true"></div>
         <div class="status-text" id="status-text">STANDBY</div>
         <div class="status-hint" id="status-hint">Say "Jarvis" to begin</div>
       </div>
@@ -122,6 +94,13 @@
     </div>
   </div>
 
-  <script src="/static/app.js"></script>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+    }
+  }
+  </script>
+  <script type="module" src="/static/app.js"></script>
 </body>
 </html>

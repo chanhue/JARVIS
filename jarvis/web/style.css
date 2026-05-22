@@ -114,22 +114,14 @@ html, body {
   filter: drop-shadow(0 0 24px rgba(0, 212, 255, 0.35));
   transition: filter 0.4s ease, color 0.4s ease;
 }
-.reactor-svg { width: 100%; height: 100%; }
-
-.ring-outer { transform-origin: 150px 150px; animation: spin 20s linear infinite; }
-.ring-mid   { transform-origin: 150px 150px; animation: spin 12s linear infinite reverse; }
-.ring-inner { transform-origin: 150px 150px; animation: spin 6s linear infinite; }
-.core-glow  { animation: pulse 3s ease-in-out infinite; transform-origin: 150px 150px; }
-.core-center { animation: corePulse 2s ease-in-out infinite; transform-origin: 150px 150px; }
-
-@keyframes spin { to { transform: rotate(360deg); } }
-@keyframes pulse {
-  0%, 100% { opacity: 0.85; transform: scale(1); }
-  50%      { opacity: 1;    transform: scale(1.04); }
+.reactor-canvas {
+  position: absolute;
+  inset: 0;
 }
-@keyframes corePulse {
-  0%, 100% { opacity: 0.85; }
-  50%      { opacity: 1; filter: drop-shadow(0 0 14px var(--cyan-bright)); }
+.reactor-canvas canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
 }
 
 .status-text {
@@ -155,27 +147,15 @@ html, body {
   white-space: nowrap;
 }
 
-/* === 상태별 색/스피드 === */
-.reactor[data-state="standby"]    { color: var(--cyan); }
-.reactor[data-state="listening"]  { color: var(--cyan-bright); filter: drop-shadow(0 0 36px rgba(154, 240, 255, 0.7)); }
-.reactor[data-state="listening"] .ring-outer { animation-duration: 8s; }
-.reactor[data-state="listening"] .ring-inner { animation-duration: 2s; }
-.reactor[data-state="listening"] .core-glow  { animation-duration: 1s; }
-
-.reactor[data-state="thinking"]   { color: var(--amber); filter: drop-shadow(0 0 28px rgba(255, 179, 71, 0.55)); }
-.reactor[data-state="thinking"] .ring-outer { animation-duration: 4s; }
-.reactor[data-state="thinking"] .ring-mid   { animation-duration: 3s; }
-.reactor[data-state="thinking"] .ring-inner { animation-duration: 1.5s; }
-
-.reactor[data-state="speaking"]   { color: var(--green); filter: drop-shadow(0 0 30px rgba(110, 255, 179, 0.55)); }
-.reactor[data-state="speaking"] .core-glow { animation: speakPulse 0.6s ease-in-out infinite; }
-@keyframes speakPulse {
-  0%, 100% { transform: scale(1);    opacity: 0.9; }
-  50%      { transform: scale(1.07); opacity: 1; }
-}
-
-.reactor[data-state="error"]      { color: var(--red); filter: drop-shadow(0 0 24px rgba(255, 93, 108, 0.5)); }
-.reactor[data-state="needs-setup"] { color: var(--dim); filter: drop-shadow(0 0 12px rgba(111, 155, 191, 0.3)); }
+/* === 상태별 바깥쪽 글로우 (드롭섀도우) ===
+   실제 회전/펄스/색은 Three.js 가 캔버스 안에서 처리.
+   여기서는 캔버스 주변에 떨어지는 글로우 색만 상태별로 바꾼다. */
+.reactor[data-state="standby"]    { filter: drop-shadow(0 0 24px rgba(0, 212, 255, 0.35)); }
+.reactor[data-state="listening"]  { filter: drop-shadow(0 0 38px rgba(154, 240, 255, 0.7)); }
+.reactor[data-state="thinking"]   { filter: drop-shadow(0 0 30px rgba(255, 179, 71, 0.55)); }
+.reactor[data-state="speaking"]   { filter: drop-shadow(0 0 34px rgba(110, 255, 179, 0.6)); }
+.reactor[data-state="error"]      { filter: drop-shadow(0 0 24px rgba(255, 93, 108, 0.55)); }
+.reactor[data-state="needs-setup"] { filter: drop-shadow(0 0 14px rgba(111, 155, 191, 0.3)); }
 
 /* === 로그 패널 === */
 .log-panel {
