@@ -42,54 +42,69 @@ export function createReactor(container) {
   const root = new THREE.Group();
   scene.add(root);
 
-  // ── 와이어프레임 구체 (메인) ──────────────────────────────
+  // 각 vertex 를 반경 방향으로 무작위로 ±amount 만큼 밀어내 격자를 깬다.
+  // 영화 J.A.R.V.I.S. 의 와이어프레임처럼 "균일한 측지 돔" 느낌을 줄여줌.
+  function perturbSphere(geom, amount) {
+    const pos = geom.attributes.position;
+    for (let i = 0; i < pos.count; i++) {
+      const x = pos.getX(i);
+      const y = pos.getY(i);
+      const z = pos.getZ(i);
+      const r = Math.sqrt(x * x + y * y + z * z);
+      if (r < 1e-4) continue;
+      const scale = 1 + (Math.random() - 0.5) * 2 * amount;
+      pos.setXYZ(i, x * scale, y * scale, z * scale);
+    }
+    pos.needsUpdate = true;
+    geom.computeVertexNormals();
+  }
+
+  // ── 와이어프레임 구체 (메인) — 무작위 변형 ────────────────
   const sphereMat = new THREE.MeshBasicMaterial({
     color: STATE_COLORS.standby,
     wireframe: true,
     transparent: true,
     opacity: 0.55,
   });
-  const sphere = new THREE.Mesh(
-    new THREE.IcosahedronGeometry(1.55, 3),
-    sphereMat
-  );
+  const sphereGeom = new THREE.IcosahedronGeometry(1.55, 4);
+  perturbSphere(sphereGeom, 0.15);
+  const sphere = new THREE.Mesh(sphereGeom, sphereMat);
   root.add(sphere);
 
-  // ── 살짝 큰 와이어 구체 — 깊이감 ──────────────────────────
+  // ── 살짝 큰 외곽 와이어 구체 — 깊이감 + 다른 변형 ─────────
   const outerMat = new THREE.MeshBasicMaterial({
     color: STATE_COLORS.standby,
     wireframe: true,
     transparent: true,
-    opacity: 0.18,
+    opacity: 0.2,
   });
-  const outer = new THREE.Mesh(
-    new THREE.IcosahedronGeometry(1.85, 2),
-    outerMat
-  );
+  const outerGeom = new THREE.IcosahedronGeometry(1.95, 3);
+  perturbSphere(outerGeom, 0.22);
+  const outer = new THREE.Mesh(outerGeom, outerMat);
   root.add(outer);
 
-  // ── 안쪽 코어 ─────────────────────────────────────────
+  // ── 안쪽 코어 (작고 또렷한 점) ────────────────────────────
   const coreMat = new THREE.MeshBasicMaterial({
     color: STATE_COLORS.standby,
     transparent: true,
-    opacity: 0.95,
+    opacity: 0.98,
   });
   const core = new THREE.Mesh(
-    new THREE.SphereGeometry(0.32, 28, 28),
+    new THREE.SphereGeometry(0.18, 24, 24),
     coreMat
   );
   root.add(core);
 
-  // 코어 둘레 글로우 — 약간 더 큰 반투명 구
+  // 코어 둘레 글로우
   const haloMat = new THREE.MeshBasicMaterial({
     color: STATE_COLORS.standby,
     transparent: true,
-    opacity: 0.18,
+    opacity: 0.22,
     blending: THREE.AdditiveBlending,
     depthWrite: false,
   });
   const halo = new THREE.Mesh(
-    new THREE.SphereGeometry(0.65, 24, 24),
+    new THREE.SphereGeometry(0.42, 24, 24),
     haloMat
   );
   root.add(halo);
@@ -213,10 +228,19 @@ export function createReactor(container) {
     particles.rotation.y -= 0.0006;
     particles.rotation.x += 0.0003;
 
-    // 코어 펄스
-    const pulse = 1.0 + 0.18 * Math.sin(elapsed * pulseSpeed);
-    core.scale.setScalar(pulse);
-    halo.scale.setScalar(1.0 + 0.25 * Math.sin(elapsed * pulseSpeed * 0.8));
+    // 코어 / 헤일로는 부풀지 않음 (가만히).
+    // 테두리(외곽 구체 + 링 + 파티클)는 사인파로 같이 들숨/날숨 — 같은 위상이라
+    // 링끼리 안 부딪힘. 외곽 구체와 파티클은 위상이 살짝 어긋나서 레이어가
+    // 따로 호흡하는 인상.
+    const breathT = elapsed * pulseSpeed * 0.4;
+    const breath = Math.sin(breathT);
+
+    rings.forEach((ring, idx) => {
+      const amp = 0.025 + idx * 0.015;
+      ring.scale.setScalar(1.0 + amp * breath);
+    });
+    outer.scale.setScalar(1.0 + 0.06 * Math.sin(breathT - 0.4));
+    particles.scale.setScalar(1.0 + 0.05 * Math.sin(breathT + 0.3));
 
     renderer.render(scene, camera);
   }
