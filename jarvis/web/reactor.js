@@ -27,7 +27,9 @@ export function createReactor(container) {
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
-  camera.position.z = 5.2;
+  // 카메라를 충분히 뒤로 — 바깥 링 + 파티클까지 다 화면에 들어오도록.
+  // FOV 45°, 카메라 z=7.5 → z=0 평면에서 보이는 반높이 ≈ 3.1 (최외곽 파티클 r≈2.8 + 여유)
+  camera.position.z = 7.5;
 
   const renderer = new THREE.WebGLRenderer({
     alpha: true,
