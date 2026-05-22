@@ -1,17 +1,19 @@
-(() => {
-  const STATE_LABELS = {
-    "standby": ["STANDBY", 'Say "Jarvis" to begin'],
-    "listening": ["LISTENING", "Speak now"],
-    "thinking": ["THINKING", "Processing"],
-    "speaking": ["SPEAKING", "Responding"],
-    "error": ["ERROR", "Something went wrong"],
-    "needs-setup": ["OFFLINE", "Initial setup required"],
-  };
+import { createReactor } from "./reactor.js";
 
-  const el = {
-    reactor: document.getElementById("reactor"),
-    statusText: document.getElementById("status-text"),
-    statusHint: document.getElementById("status-hint"),
+const STATE_LABELS = {
+  "standby": ["STANDBY", 'Say "Jarvis" to begin'],
+  "listening": ["LISTENING", "Speak now"],
+  "thinking": ["THINKING", "Processing"],
+  "speaking": ["SPEAKING", "Responding"],
+  "error": ["ERROR", "Something went wrong"],
+  "needs-setup": ["OFFLINE", "Initial setup required"],
+};
+
+const el = {
+  reactor: document.getElementById("reactor"),
+  reactorCanvas: document.getElementById("reactor-canvas"),
+  statusText: document.getElementById("status-text"),
+  statusHint: document.getElementById("status-hint"),
     log: document.getElementById("log"),
     wsDot: document.getElementById("ws-dot"),
     userChip: document.getElementById("user-chip"),
@@ -56,11 +58,15 @@
   // "initial" | "edit"
   let modalMode = "initial";
 
+  // 3D 리액터 초기화 — 캔버스에 Three.js scene 마운트
+  const reactor = createReactor(el.reactorCanvas);
+
   function setState(value) {
     el.reactor.dataset.state = value;
     const [label, hint] = STATE_LABELS[value] || [value.toUpperCase(), ""];
     el.statusText.textContent = label;
     el.statusHint.textContent = hint;
+    reactor.setState(value);
   }
 
   function appendTranscript(role, text, lang) {
@@ -266,7 +272,6 @@
     }
   });
 
-  updateSetupFields();
-  bootstrap();
-  connectWS();
-})();
+updateSetupFields();
+bootstrap();
+connectWS();
