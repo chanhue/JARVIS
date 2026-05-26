@@ -77,15 +77,16 @@ source .venv/bin/activate     # 새 터미널이면 매번 활성화 필요
 python main.py
 ```
 
-- 브라우저가 자동으로 `http://localhost:8765` 를 엽니다.
-- **첫 실행**: UI 모달에서 이름 / AI 종류 / API 키 입력 후 INITIALIZE
+- 네이티브 창(pywebview 의 macOS WebKit)이 자동으로 뜹니다 — Dock 에 별도 앱처럼 표시.
+- **첫 실행**: 창의 UI 모달에서 이름 / AI 종류 / API 키 입력 후 INITIALIZE
 - macOS 가 **마이크 권한**을 묻는 다이얼로그를 한 번 띄웁니다 → 허용
 - 이후엔 **"Jarvis"** 또는 **"자비스"** 라고 부르면 깨어납니다
 
 ### 옵션
 
 ```bash
-python main.py --no-browser   # 브라우저 자동 오픈 끄기
+python main.py --browser      # 네이티브 창 대신 시스템 기본 브라우저로 열기
+python main.py --no-window    # 창/브라우저 둘 다 안 열고 서버만 (헤드리스)
 python main.py --port 9999    # 포트 바꾸기
 python main.py --host 0.0.0.0 # 같은 네트워크의 다른 기기에서 접속 허용
 ```

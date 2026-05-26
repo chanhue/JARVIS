@@ -17,6 +17,8 @@ pyautogui>=0.9.54
 # Web 서버 / UI
 fastapi>=0.115.0
 uvicorn[standard]>=0.30.0
+# 네이티브 창 (브라우저 없이 자체 윈도우). macOS 에선 WebKit 사용.
+pywebview>=5.0
 
 # Config
 pydantic>=2.6.0
